@@ -1,0 +1,15 @@
+*eclipse-workspace*/
+doskey
+build/
+target/
+target-*/
+gwt-unitCache/
+deploy/
+bin/
+gen/
+.idea/
+app-built/
+.gwt/
+.settings/
+runtime-EclipseApplication/
+runtime-EclipseXtext/
