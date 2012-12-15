@@ -19,12 +19,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.googlecode.mgwt.dom.client.event.touch.TouchStartEvent;
+import com.googlecode.mgwt.dom.client.event.touch.TouchStartHandler;
 import com.googlecode.mgwt.mvp.client.Animation;
 import com.googlecode.mgwt.ui.client.MGWT;
 import com.googlecode.mgwt.ui.client.MGWTSettings;
 import com.googlecode.mgwt.ui.client.animation.AnimationHelper;
-import com.googlecode.mgwt.ui.client.util.SuperDevModeUtil;
+import com.googlecode.mgwt.ui.client.widget.Button;
 import com.googlecode.mgwt.ui.client.widget.GroupingCellList;
 import com.googlecode.mgwt.ui.client.widget.GroupingCellList.CellGroup;
 import com.googlecode.mgwt.ui.client.widget.GroupingCellList.StandardCellGroup;
@@ -32,6 +35,7 @@ import com.googlecode.mgwt.ui.client.widget.HeaderList;
 import com.googlecode.mgwt.ui.client.widget.LayoutPanel;
 import com.googlecode.mgwt.ui.client.widget.tabbar.ContactsTabBarButton;
 import com.googlecode.mgwt.ui.client.widget.tabbar.RootTabPanel;
+import com.googlecode.mgwt.ui.client.widget.tabbar.TabPanel;
 
 /**
  * @author Daniel Kurka
@@ -45,6 +49,9 @@ public class MgwtAppEntryPoint implements EntryPoint {
 
       // listOnly();
       rootTabPanel();
+      // tabPanel();
+      // listOnlyWithFixedHeight();
+      // listOnlyWithButtons();
    }
 
    private void listOnly() {
@@ -75,6 +82,66 @@ public class MgwtAppEntryPoint implements EntryPoint {
 
       myRootTabs.getAnimatableDisplay().setFirstWidget(layoutPanel);
       myRootTabs.getAnimatableDisplay().animate(Animation.SLIDE, true, null);
+   }
+
+   private void tabPanel() {
+      final LayoutPanel layoutPanel = new LayoutPanel();
+
+      final GroupingCellList<Header, Content> groupingCellList = new GroupingCellList<Header, Content>(new ContentCell(), new HeaderCell());
+      final HeaderList<Header, Content> headerList = new HeaderList<Header, Content>(groupingCellList);
+      layoutPanel.add(headerList);
+
+      final TabPanel tabPanel = new TabPanel();
+      tabPanel.add(new ContactsTabBarButton(), headerList);
+      RootPanel.get().add(tabPanel);
+
+      headerList.render(buildList(6));
+   }
+
+   private void listOnlyWithFixedHeight() {
+      final AnimationHelper animationHelper = new AnimationHelper();
+      RootPanel.get().add(animationHelper);
+
+      final GroupingCellList<Header, Content> groupingCellList = new GroupingCellList<Header, Content>(new ContentCell(), new HeaderCell());
+      final HeaderList<Header, Content> headerList = new HeaderList<Header, Content>(groupingCellList);
+      headerList.render(buildList(6));
+
+      final LayoutPanel layoutPanel = new LayoutPanel();
+      layoutPanel.setHeight("90%");
+      layoutPanel.add(headerList);
+
+      animationHelper.goTo(layoutPanel, Animation.SLIDE);
+   }
+
+   private void listOnlyWithButtons() {
+      final AnimationHelper animationHelper = new AnimationHelper();
+      RootPanel.get().add(animationHelper);
+
+      final FlowPanel buttonContainer = new FlowPanel();
+      buttonContainer.setHeight("48px");
+
+      buttonContainer.getElement().getStyle().setProperty("display", "-webkit-box");
+      buttonContainer.getElement().getStyle().setProperty("WebkitBoxOrient", "horizontal");
+      buttonContainer.getElement().getStyle().setProperty("borderTop", "1px solid black");
+      buttonContainer.getElement().getStyle()
+            .setProperty("backgroundImage", "-webkit-gradient(linear, left top, left bottom, from(#2E2E2E), color-stop(50%,#161616), color-stop(51%, black), to(black))");
+
+      final ContactsTabBarButton w2 = new ContactsTabBarButton();
+      w2.getElement().getStyle().setProperty("WebkitBoxFlex", "1");
+      buttonContainer.add(w2);
+
+      final GroupingCellList<Header, Content> groupingCellList = new GroupingCellList<Header, Content>(new ContentCell(), new HeaderCell());
+      final HeaderList<Header, Content> headerList = new HeaderList<Header, Content>(groupingCellList);
+      headerList.render(buildList(6));
+
+      final LayoutPanel contactsPanel = new LayoutPanel();
+      contactsPanel.add(headerList);
+
+      contactsPanel.getElement().getStyle().setProperty("display", "-webkit-box");
+      contactsPanel.getElement().getStyle().setProperty("WebkitBoxOrient", "vertical");
+      contactsPanel.add(buttonContainer);
+
+      animationHelper.goTo(contactsPanel, Animation.SLIDE);
    }
 
    private List<CellGroup<Header, Content>> buildList(final int contentSize) {
